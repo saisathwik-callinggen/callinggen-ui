@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useAuth } from "@/components/AuthProvider";
 import DashboardShell from "@/components/DashboardShell";
 import {
@@ -27,6 +28,7 @@ import {
   PhoneOff,
   BarChart2,
   Target,
+  PhoneCall,
 } from "lucide-react";
 
 /* ── Dummy Data ──────────────────────────────────── */
@@ -93,15 +95,24 @@ export default function DashboardPage() {
       <div className="space-y-6">
 
         {/* ── Greeting banner ── */}
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-xl font-bold">Performance Overview</h2>
             <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
               Track your calling activity and agent performance in real-time.
             </p>
           </div>
-          <div className="rounded-full border border-zinc-200 bg-white px-4 py-1.5 text-xs font-medium text-zinc-600 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-            {new Date().toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+          <div className="flex items-center gap-3">
+            <div className="rounded-full border border-zinc-200 bg-white px-4 py-1.5 text-xs font-medium text-zinc-600 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+              {new Date().toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}
+            </div>
+            <Link
+              href="/dashboard/call-manager"
+              className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition-all hover:shadow-xl hover:shadow-violet-500/30 hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <PhoneCall className="h-4 w-4" />
+              Start Calling
+            </Link>
           </div>
         </div>
 

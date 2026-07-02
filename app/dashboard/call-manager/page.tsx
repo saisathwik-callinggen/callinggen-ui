@@ -73,6 +73,9 @@ export default function CallManagerPage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [fileUploaded, setFileUploaded] = useState(false);
+  const [singleContactName, setSingleContactName] = useState("");
+  const [singleContactPhone, setSingleContactPhone] = useState("");
+  const [scheduleMessage, setScheduleMessage] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -91,6 +94,29 @@ export default function CallManagerPage() {
   const handleFileSelect = () => {
     setFileUploaded(true);
     setContacts(dummyContacts);
+  };
+
+  const handleScheduleCall = () => {
+    const trimmedName = singleContactName.trim();
+    const trimmedPhone = singleContactPhone.trim();
+
+    if (!trimmedName || !trimmedPhone) {
+      setScheduleMessage("Please enter both the contact name and phone number.");
+      return;
+    }
+
+    const newContact: Contact = {
+      id: Date.now(),
+      name: trimmedName,
+      phone: trimmedPhone,
+      status: "pending",
+      response: "Scheduled",
+    };
+
+    setContacts((prev) => [newContact, ...prev]);
+    setSingleContactName("");
+    setSingleContactPhone("");
+    setScheduleMessage(`Call scheduled for ${trimmedName}.`);
   };
 
   return (
@@ -224,18 +250,30 @@ export default function CallManagerPage() {
             <div className="grid grid-cols-2 gap-2 mb-3">
               <input
                 type="text"
+                value={singleContactName}
+                onChange={(e) => setSingleContactName(e.target.value)}
                 placeholder="Full Name"
                 className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm placeholder:text-zinc-400 focus:border-violet-400 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:placeholder:text-zinc-600"
               />
               <input
                 type="text"
+                value={singleContactPhone}
+                onChange={(e) => setSingleContactPhone(e.target.value)}
                 placeholder="+91 XXXXX XXXXX"
                 className="rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 text-sm placeholder:text-zinc-400 focus:border-violet-400 focus:outline-none dark:border-zinc-700 dark:bg-zinc-800 dark:placeholder:text-zinc-600"
               />
             </div>
-            <button className="w-full rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:shadow-xl hover:shadow-violet-500/30">
+            <button
+              onClick={handleScheduleCall}
+              className="w-full rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 transition hover:shadow-xl hover:shadow-violet-500/30"
+            >
               Schedule Call
             </button>
+            {scheduleMessage && (
+              <p className={`mt-2 text-xs ${scheduleMessage.startsWith("Please") ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}`}>
+                {scheduleMessage}
+              </p>
+            )}
             <p className="mt-2 text-[10px] text-zinc-400 dark:text-zinc-600">
               Format: +91 XXXXX XXXXX — country code, space, then the 10-digit number
             </p>

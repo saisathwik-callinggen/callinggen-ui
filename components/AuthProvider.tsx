@@ -44,15 +44,17 @@ export default function AuthProvider({
   const router = useRouter();
 
   useEffect(() => {
-    setMounted(true);
-    const stored = localStorage.getItem("callinggen-auth");
-    if (stored) {
-      try {
-        setUser(JSON.parse(stored));
-      } catch {
-        localStorage.removeItem("callinggen-auth");
+    setTimeout(() => {
+      setMounted(true);
+      const stored = localStorage.getItem("callinggen-auth");
+      if (stored) {
+        try {
+          setUser(JSON.parse(stored));
+        } catch {
+          localStorage.removeItem("callinggen-auth");
+        }
       }
-    }
+    }, 0);
   }, []);
 
   const login = useCallback(

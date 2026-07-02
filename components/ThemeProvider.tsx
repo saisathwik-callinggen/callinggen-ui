@@ -27,15 +27,17 @@ export default function ThemeProvider({
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    const stored = localStorage.getItem("callinggen-theme") as Theme | null;
-    if (stored) {
-      setTheme(stored);
-      document.documentElement.classList.toggle("dark", stored === "dark");
-    } else {
-      setTheme("light");
-      document.documentElement.classList.remove("dark");
-    }
+    setTimeout(() => {
+      setMounted(true);
+      const stored = localStorage.getItem("callinggen-theme") as Theme | null;
+      if (stored) {
+        setTheme(stored);
+        document.documentElement.classList.toggle("dark", stored === "dark");
+      } else {
+        setTheme("light");
+        document.documentElement.classList.remove("dark");
+      }
+    }, 0);
   }, []);
 
   const toggleTheme = () => {

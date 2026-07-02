@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AlertCircle, ArrowRight, Lock, Mail, MoonStar, Phone, SunMedium } from "lucide-react";
+import { AlertCircle, ArrowRight, Lock, Mail, MoonStar, Phone, SunMedium, Sparkles, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
 import { useTheme } from "@/components/ThemeProvider";
@@ -14,6 +14,13 @@ export default function LoginPage() {
   const [email, setEmail] = useState("admin@callinggen.com");
   const [password, setPassword] = useState("admin123");
   const [error, setError] = useState("");
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [resetStep, setResetStep] = useState<"email" | "verify" | "reset" | "done">("email");
+  const [resetEmail, setResetEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [resetMessage, setResetMessage] = useState("");
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -32,132 +39,295 @@ export default function LoginPage() {
     setError("Use the demo credentials below to sign in.");
   };
 
+  const resetFlow = {
+    email: {
+      title: "Reset your password",
+      subtitle: "Enter your email and we’ll send a verification code.",
+      button: "Send code",
+    },
+    verify: {
+      title: "Verify your email",
+      subtitle: "Enter the 6-digit code we sent to your inbox.",
+      button: "Verify code",
+    },
+    reset: {
+      title: "Create a new password",
+      subtitle: "Choose a new password for your account.",
+      button: "Reset password",
+    },
+    done: {
+      title: "Password updated",
+      subtitle: "You can now sign in with your new password.",
+      button: "Close",
+    },
+  };
+
+  const handleForgotPassword = () => {
+    setShowForgotModal(true);
+    setResetStep("email");
+    setResetEmail("");
+    setVerificationCode("");
+    setNewPassword("");
+    setConfirmPassword("");
+    setResetMessage("");
+  };
+
+  const handleResetSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setResetMessage("");
+
+    if (resetStep === "email") {
+      if (!resetEmail.trim()) {
+        setResetMessage("Please enter your email address.");
+        return;
+      }
+      setResetMessage(`Verification code sent to ${resetEmail}`);
+      setResetStep("verify");
+      return;
+    }
+
+    if (resetStep === "verify") {
+      if (verificationCode.length < 6) {
+        setResetMessage("Please enter the 6-digit verification code.");
+        return;
+      }
+      setResetMessage("Code verified successfully.");
+      setResetStep("reset");
+      return;
+    }
+
+    if (resetStep === "reset") {
+      if (!newPassword || newPassword.length < 6) {
+        setResetMessage("Password must be at least 6 characters long.");
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        setResetMessage("Passwords do not match.");
+        return;
+      }
+      setResetMessage("Your password has been reset successfully.");
+      setResetStep("done");
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(15,23,42,0.08),_transparent_35%),linear-gradient(135deg,#f8fafc_0%,#eef2f7_100%)] text-zinc-900 transition-colors dark:bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.1),_transparent_35%),linear-gradient(135deg,#09090b_0%,#111827_100%)] dark:text-white">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.14),_transparent_30%),linear-gradient(135deg,#f8fafc_0%,#eef2f7_100%)] text-zinc-900 transition-colors dark:bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.18),_transparent_30%),linear-gradient(135deg,#09090b_0%,#111827_100%)] dark:text-white">
       <nav className="border-b border-zinc-200/80 bg-white/80 backdrop-blur-xl dark:border-zinc-800 dark:bg-black/80">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-zinc-900 text-white shadow-sm dark:border-zinc-700 dark:bg-white dark:text-black">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-500/20">
               <Phone className="h-5 w-5" />
             </div>
             <span className="text-lg font-semibold tracking-tight">CallingGen</span>
           </Link>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => toggleTheme()}
-              className="flex items-center gap-2 rounded-full border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-700 shadow-sm transition hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900"
-            >
-              {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
-              {theme === "dark" ? "Light" : "Dark"}
-            </button>
-            <Link
-              href="/"
-              className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-medium transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900"
-            >
-              Home
-            </Link>
-          </div>
+          <button
+            type="button"
+            onClick={() => toggleTheme()}
+            className="flex items-center gap-2 rounded-full border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-700 shadow-sm transition hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900"
+          >
+            {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
+            {theme === "dark" ? "Light" : "Dark"}
+          </button>
         </div>
       </nav>
 
       <div className="flex min-h-[calc(100vh-73px)] items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
-        <div className="grid w-full max-w-6xl overflow-hidden rounded-[2rem] border border-zinc-200/80 bg-white/90 shadow-[0_20px_80px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/90 dark:shadow-[0_20px_80px_rgba(0,0,0,0.45)] lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="flex flex-col justify-between bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-800 p-8 text-white dark:from-zinc-900 dark:via-zinc-950 dark:to-black">
-            <div>
-              <div className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-3 py-1 text-sm text-zinc-200">
-                Demo Workspace
-              </div>
-              <h1 className="mt-6 text-3xl font-semibold leading-tight sm:text-4xl">
-                Manage your calls with a clean, focused dashboard.
-              </h1>
-              <p className="mt-4 max-w-lg text-sm leading-6 text-zinc-300 sm:text-base">
-                This demo experience gives you a polished login flow, a responsive sidebar, and a calm overview for your daily operations.
-              </p>
+        <div className="w-full max-w-md rounded-[1.75rem] border border-zinc-200/80 bg-white/90 p-6 shadow-[0_20px_80px_rgba(15,23,42,0.12)] backdrop-blur-xl dark:border-zinc-800 dark:bg-zinc-950/90 dark:shadow-[0_20px_80px_rgba(0,0,0,0.45)] sm:p-8">
+          <div className="mb-6 text-center">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white shadow-lg shadow-violet-500/20">
+              <Sparkles className="h-5 w-5" />
             </div>
-
-            <div className="mt-8 space-y-3 rounded-2xl border border-white/10 bg-white/10 p-4">
-              {[
-                "Fast sign-in with demo credentials",
-                "Dark and light mode support",
-                "Simple dashboard navigation",
-              ].map((item) => (
-                <div key={item} className="flex items-center gap-3 text-sm text-zinc-200">
-                  <div className="h-2.5 w-2.5 rounded-full bg-white" />
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
+            <h2 className="text-2xl font-semibold">Welcome back</h2>
+            <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
+              Sign in to continue to your workspace.
+            </p>
           </div>
 
-          <div className="p-6 sm:p-8 lg:p-10">
-            <div className="mb-8 text-center lg:text-left">
-              <p className="text-sm uppercase tracking-[0.3em] text-zinc-500">Dummy Login</p>
-              <h2 className="mt-2 text-2xl font-semibold">Welcome back</h2>
-              <p className="mt-2 text-sm text-zinc-400">
-                Sign in with the built-in demo account to open the dashboard.
-              </p>
+          <form className="space-y-4" onSubmit={handleSubmit}>
+            <div>
+              <label htmlFor="login-email" className="mb-2 block text-sm font-medium">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                <input
+                  id="login-email"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="you@company.com"
+                  className="w-full rounded-2xl border border-zinc-300 bg-white py-3 pl-11 pr-4 text-sm text-zinc-900 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-zinc-700 dark:bg-black dark:text-white dark:focus:border-violet-400 dark:focus:ring-violet-500/20"
+                />
+              </div>
             </div>
 
-            <div className="mb-5 rounded-2xl border border-zinc-200 bg-zinc-100/90 p-3 text-sm text-zinc-700 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/70 dark:text-zinc-300">
-              <p className="font-semibold text-zinc-900 dark:text-white">Demo credentials</p>
-              <p className="mt-1">Email: admin@callinggen.com</p>
-              <p>Password: admin123</p>
+            <div>
+              <label htmlFor="login-password" className="mb-2 block text-sm font-medium">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                <input
+                  id="login-password"
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="••••••••"
+                  className="w-full rounded-2xl border border-zinc-300 bg-white py-3 pl-11 pr-4 text-sm text-zinc-900 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-zinc-700 dark:bg-black dark:text-white dark:focus:border-violet-400 dark:focus:ring-violet-500/20"
+                />
+              </div>
             </div>
 
-            <form className="space-y-5" onSubmit={handleSubmit}>
+            <div className="flex items-center justify-end">
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="text-sm font-medium text-violet-600 hover:text-violet-700 dark:text-violet-400"
+              >
+                Forgot password?
+              </button>
+            </div>
+
+            {error ? (
+              <div className="flex items-center gap-2 rounded-2xl border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-300">
+                <AlertCircle className="h-4 w-4" />
+                <span>{error}</span>
+              </div>
+            ) : null}
+
+            <button
+              type="submit"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/20 transition hover:shadow-xl hover:shadow-violet-500/30"
+            >
+              Sign In
+              <ArrowRight className="h-4 w-4" />
+            </button>
+
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-zinc-200 dark:border-zinc-800" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase tracking-[0.2em] text-zinc-400">
+                <span className="bg-white px-3 dark:bg-zinc-950">Or continue with</span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl border border-zinc-300 bg-white py-3 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.84z" />
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+              </svg>
+              Continue with Google
+            </button>
+          </form>
+        </div>
+      </div>
+
+      {showForgotModal ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-[1.5rem] border border-zinc-200 bg-white p-6 shadow-2xl dark:border-zinc-800 dark:bg-zinc-950">
+            <div className="mb-5 flex items-start justify-between gap-3">
               <div>
-                <label htmlFor="login-email" className="mb-2 block text-sm font-medium">
-                  Email
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                <p className="text-sm font-semibold text-violet-600">Password recovery</p>
+                <h3 className="mt-1 text-xl font-semibold">{resetFlow[resetStep].title}</h3>
+                <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{resetFlow[resetStep].subtitle}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowForgotModal(false)}
+                className="rounded-full p-2 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-white"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <form className="space-y-4" onSubmit={handleResetSubmit}>
+              {resetStep === "email" ? (
+                <div>
+                  <label htmlFor="reset-email" className="mb-2 block text-sm font-medium">Email address</label>
+                  <div className="relative">
+                    <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                    <input
+                      id="reset-email"
+                      type="email"
+                      value={resetEmail}
+                      onChange={(event) => setResetEmail(event.target.value)}
+                      placeholder="you@company.com"
+                      className="w-full rounded-2xl border border-zinc-300 bg-white py-3 pl-11 pr-4 text-sm text-zinc-900 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-zinc-700 dark:bg-black dark:text-white dark:focus:border-violet-400 dark:focus:ring-violet-500/20"
+                    />
+                  </div>
+                </div>
+              ) : null}
+
+              {resetStep === "verify" ? (
+                <div>
+                  <label htmlFor="verification-code" className="mb-2 block text-sm font-medium">Verification code</label>
                   <input
-                    id="login-email"
-                    type="email"
-                    value={email}
-                    onChange={(event) => setEmail(event.target.value)}
-                    placeholder="you@company.com"
-                    className="w-full rounded-2xl border border-zinc-300 bg-white py-3 pl-11 pr-4 text-sm text-zinc-900 outline-none transition focus:border-zinc-900 focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-black dark:text-white dark:focus:border-white dark:focus:ring-zinc-800"
+                    id="verification-code"
+                    type="text"
+                    value={verificationCode}
+                    onChange={(event) => setVerificationCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
+                    placeholder="123456"
+                    className="w-full rounded-2xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-zinc-700 dark:bg-black dark:text-white dark:focus:border-violet-400 dark:focus:ring-violet-500/20"
                   />
                 </div>
-              </div>
+              ) : null}
 
-              <div>
-                <label htmlFor="login-password" className="mb-2 block text-sm font-medium">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-                  <input
-                    id="login-password"
-                    type="password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    placeholder="••••••••"
-                    className="w-full rounded-2xl border border-zinc-300 bg-white py-3 pl-11 pr-4 text-sm text-zinc-900 outline-none transition focus:border-zinc-900 focus:ring-2 focus:ring-zinc-200 dark:border-zinc-700 dark:bg-black dark:text-white dark:focus:border-white dark:focus:ring-zinc-800"
-                  />
-                </div>
-              </div>
+              {resetStep === "reset" ? (
+                <>
+                  <div>
+                    <label htmlFor="new-password" className="mb-2 block text-sm font-medium">New password</label>
+                    <div className="relative">
+                      <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                      <input
+                        id="new-password"
+                        type="password"
+                        value={newPassword}
+                        onChange={(event) => setNewPassword(event.target.value)}
+                        placeholder="Enter new password"
+                        className="w-full rounded-2xl border border-zinc-300 bg-white py-3 pl-11 pr-4 text-sm text-zinc-900 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-zinc-700 dark:bg-black dark:text-white dark:focus:border-violet-400 dark:focus:ring-violet-500/20"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label htmlFor="confirm-password" className="mb-2 block text-sm font-medium">Confirm password</label>
+                    <div className="relative">
+                      <Lock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
+                      <input
+                        id="confirm-password"
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(event) => setConfirmPassword(event.target.value)}
+                        placeholder="Confirm new password"
+                        className="w-full rounded-2xl border border-zinc-300 bg-white py-3 pl-11 pr-4 text-sm text-zinc-900 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-zinc-700 dark:bg-black dark:text-white dark:focus:border-violet-400 dark:focus:ring-violet-500/20"
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : null}
 
-              {error ? (
-                <div className="flex items-center gap-2 rounded-2xl border border-zinc-200 bg-zinc-100 px-3 py-2 text-sm text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
-                  <AlertCircle className="h-4 w-4" />
-                  <span>{error}</span>
+              {resetMessage ? (
+                <div className={`rounded-2xl border px-3 py-2 text-sm ${resetMessage.includes("success") || resetMessage.includes("verified") ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-300" : "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-300"}`}>
+                  {resetMessage}
                 </div>
               ) : null}
 
               <button
                 type="submit"
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-zinc-900 py-3 text-sm font-semibold text-white shadow-lg shadow-zinc-300/60 transition hover:bg-zinc-800 dark:bg-white dark:text-black dark:shadow-zinc-950/40 dark:hover:bg-zinc-200"
+                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-violet-600 to-indigo-600 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-500/20 transition hover:shadow-xl hover:shadow-violet-500/30"
               >
-                Sign In
+                {resetFlow[resetStep].button}
                 <ArrowRight className="h-4 w-4" />
               </button>
             </form>
           </div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }

@@ -1,16 +1,15 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AlertCircle, ArrowRight, Lock, Mail, MoonStar, Phone, SunMedium, Sparkles, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/AuthProvider";
-import { useTheme } from "@/components/ThemeProvider";
+
 
 export default function LoginPage() {
   const router = useRouter();
   const { isLoggedIn, login } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const [email, setEmail] = useState("admin@callinggen.com");
   const [password, setPassword] = useState("admin123");
   const [error, setError] = useState("");
@@ -37,6 +36,10 @@ export default function LoginPage() {
     }
 
     setError("Use the demo credentials below to sign in.");
+  };
+
+  const handleGoogleLogin = () => {
+    setError("Google login is unavailable in this demo. Use the admin credentials instead.");
   };
 
   const resetFlow = {
@@ -107,11 +110,16 @@ export default function LoginPage() {
       }
       setResetMessage("Your password has been reset successfully.");
       setResetStep("done");
+      return;
+    }
+
+    if (resetStep === "done") {
+      setShowForgotModal(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.14),_transparent_30%),linear-gradient(135deg,#f8fafc_0%,#eef2f7_100%)] text-zinc-900 transition-colors dark:bg-[radial-gradient(circle_at_top_left,_rgba(124,58,237,0.18),_transparent_30%),linear-gradient(135deg,#09090b_0%,#111827_100%)] dark:text-white">
+    <div className="min-h-screen bg-white text-zinc-900">
       <nav className="border-b border-zinc-200/80 bg-white/80 backdrop-blur-xl dark:border-zinc-800 dark:bg-black/80">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
           <Link href="/" className="flex items-center gap-3">
@@ -120,14 +128,7 @@ export default function LoginPage() {
             </div>
             <span className="text-lg font-semibold tracking-tight">CallingGen</span>
           </Link>
-          <button
-            type="button"
-            onClick={() => toggleTheme()}
-            className="flex items-center gap-2 rounded-full border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-700 shadow-sm transition hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-200 dark:hover:bg-zinc-900"
-          >
-            {theme === "dark" ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
-            {theme === "dark" ? "Light" : "Dark"}
-          </button>
+
         </div>
       </nav>
 
@@ -214,6 +215,7 @@ export default function LoginPage() {
 
             <button
               type="button"
+              onClick={handleGoogleLogin}
               className="flex w-full items-center justify-center gap-2 rounded-2xl border border-zinc-300 bg-white py-3 text-sm font-semibold text-zinc-700 transition hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">

@@ -1,13 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { useTheme } from "@/components/ThemeProvider";
+
 import { Sun, Moon, Phone, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
-  const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains("dark"));
+  }, []);
+
+  const toggleTheme = () => {
+    setIsDark((prev) => {
+      const next = !prev;
+      if (next) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+      return next;
+    });
+  };
 
   return (
     <header className="sticky top-0 z-50 glass-card">
@@ -23,10 +39,21 @@ export default function Navbar() {
           <span className="gradient-text">CallingGen</span>
         </Link>
 
-        {/* Desktop nav */}
-        <div className="hidden items-center gap-2 md:flex">
-          <Link
-            href="/#features"
+        {/* Actions Container */}
+        <div className="flex items-center gap-2 md:gap-4">
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-secondary text-muted-foreground transition-all active:scale-95"
+            aria-label="Toggle theme"
+          >
+            {isDark ? <Sun className="h-[18px] w-[18px]" /> : <Moon className="h-[18px] w-[18px]" />}
+          </button>
+
+          {/* Desktop nav */}
+          <div className="hidden items-center gap-2 md:flex">
+            <Link
+              href="/#features"
             className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-accent"
           >
             Features
@@ -46,30 +73,7 @@ export default function Navbar() {
             Pricing
           </Link>
 
-          {/* Theme toggle */}
-          <button
-            onClick={toggleTheme}
-            className="relative ml-2 flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-secondary text-muted-foreground transition-all hover:text-foreground hover:bg-accent hover:border-primary/30 hover:shadow-md active:scale-95"
-            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-            id="theme-toggle"
-          >
-            <Sun
-              className={`h-[18px] w-[18px] transition-all duration-300 ${
-                theme === "dark"
-                  ? "rotate-90 scale-0 opacity-0"
-                  : "rotate-0 scale-100 opacity-100"
-              }`}
-              style={{ position: theme === "dark" ? "absolute" : "relative" }}
-            />
-            <Moon
-              className={`h-[18px] w-[18px] transition-all duration-300 ${
-                theme === "light"
-                  ? "-rotate-90 scale-0 opacity-0"
-                  : "rotate-0 scale-100 opacity-100"
-              }`}
-              style={{ position: theme === "light" ? "absolute" : "relative" }}
-            />
-          </button>
+
 
           <Link
             href="/login"
@@ -79,20 +83,8 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile hamburger + theme toggle */}
-        <div className="flex items-center gap-2 md:hidden">
-          <button
-            onClick={toggleTheme}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-secondary text-muted-foreground transition-all hover:text-foreground active:scale-95"
-            aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
-            id="theme-toggle-mobile"
-          >
-            {theme === "light" ? (
-              <Sun className="h-[18px] w-[18px]" />
-            ) : (
-              <Moon className="h-[18px] w-[18px]" />
-            )}
-          </button>
+        {/* Mobile hamburger */}
+        <div className="flex items-center gap-4 md:hidden">
 
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -106,6 +98,7 @@ export default function Navbar() {
               <Menu className="h-[18px] w-[18px]" />
             )}
           </button>
+        </div>
         </div>
       </div>
 

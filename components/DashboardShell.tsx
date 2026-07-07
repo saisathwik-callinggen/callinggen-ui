@@ -26,17 +26,17 @@ import {
   MessageSquareText,
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
-import { useTheme } from "@/components/ThemeProvider";
+
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
-  { label: "Calendar", icon: CalendarDays, href: "/dashboard/calendar" },
-  { label: "Call Manager", icon: PhoneCall, href: "/dashboard/call-manager" },
-  { label: "Call Details", icon: ClipboardList, href: "/dashboard/details" },
-  { label: "Responses", icon: MessageSquareText, href: "/dashboard/responses" },
-  { label: "Leads", icon: Users2, href: "/dashboard/leads" },
-  { label: "Campaign", icon: Megaphone, href: "/dashboard/campaign" },
-  { label: "Report", icon: FileText, href: "/dashboard/report" },
+  { label: "Calendar", icon: CalendarDays, href: "/calendar" },
+  { label: "Call Manager", icon: PhoneCall, href: "/call-manager" },
+  { label: "Call Details", icon: ClipboardList, href: "/details" },
+  { label: "Responses", icon: MessageSquareText, href: "/responses" },
+  { label: "Leads", icon: Users2, href: "/leads" },
+  { label: "Campaign", icon: Megaphone, href: "/campaign" },
+  { label: "Report", icon: FileText, href: "/report" },
 ];
 
 export default function DashboardShell({
@@ -49,7 +49,6 @@ export default function DashboardShell({
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const credits = 75; // Dummy credits value (below 100 to demonstrate red)
 
@@ -62,13 +61,30 @@ export default function DashboardShell({
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  // Theme toggle state
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains("dark"));
+  }, []);
+
+  const toggleTheme = () => {
+    setIsDark((prev) => {
+      const next = !prev;
+      if (next) {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+      return next;
+    });
+  };
+
   // Lock scroll when mobile sidebar open
   useEffect(() => {
     document.body.style.overflow = sidebarOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [sidebarOpen]);
-
-  const isDark = theme === "dark";
 
   return (
     <div className="flex h-screen overflow-hidden bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
@@ -123,11 +139,10 @@ export default function DashboardShell({
                   key={item.label}
                   href={item.href}
                   onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${
-                    active
+                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all ${active
                       ? "bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-violet-500/20"
                       : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
-                  }`}
+                    }`}
                 >
                   <Icon className="h-4 w-4 shrink-0" />
                   {item.label}
@@ -202,21 +217,18 @@ export default function DashboardShell({
             </div>
 
             {/* Credits Display */}
-            <div className={`hidden items-center gap-1.5 rounded-full border px-3 py-1.5 sm:flex ${
-              credits < 100
+            <div className={`hidden items-center gap-1.5 rounded-full border px-3 py-1.5 sm:flex ${credits < 100
                 ? "border-red-200 bg-red-50 dark:border-red-800/50 dark:bg-red-950/40"
                 : "border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800"
-            }`}>
-              <CreditCard className={`h-3.5 w-3.5 ${
-                credits < 100
+              }`}>
+              <CreditCard className={`h-3.5 w-3.5 ${credits < 100
                   ? "text-red-500 dark:text-red-400"
                   : "text-zinc-600 dark:text-zinc-400"
-              }`} />
-              <span className={`text-xs font-semibold ${
-                credits < 100
+                }`} />
+              <span className={`text-xs font-semibold ${credits < 100
                   ? "text-red-600 dark:text-red-400"
                   : "text-zinc-700 dark:text-zinc-300"
-              }`}>
+                }`}>
                 {credits} Credits
               </span>
             </div>

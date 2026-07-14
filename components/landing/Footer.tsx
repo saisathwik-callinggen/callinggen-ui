@@ -1,87 +1,135 @@
-"use client";
-
 import Link from "next/link";
-import { Phone } from "lucide-react";
+import { Phone, MessageCircle, Globe, Briefcase, Mail } from "lucide-react";
 
 const footerLinks = {
-  Product: [
-    { label: "Features", href: "/#features" },
-    { label: "Pricing", href: "/pricing" },
-    { label: "Industries", href: "/#industries" },
+  product: [
+    { name: "Features", href: "/#features" },
+    { name: "Workflow", href: "/#workflow" },
+    { name: "Pricing", href: "/pricing" },
+    { name: "API", href: "#" },
+    { name: "Documentation", href: "#" },
   ],
-  Company: [
-    { label: "About", href: "#" },
-    { label: "Blog", href: "#" },
-    { label: "Careers", href: "#" },
+  industries: [
+    { name: "Real Estate", href: "/#industries" },
+    { name: "Healthcare", href: "/#industries" },
+    { name: "Education", href: "/#industries" },
+    { name: "Finance", href: "/#industries" },
+    { name: "Retail", href: "/#industries" },
   ],
-  Support: [
-    { label: "Help Center", href: "#" },
-    { label: "Contact", href: "#" },
-    { label: "Status", href: "#" },
+  company: [
+    { name: "About", href: "#" },
+    { name: "Careers", href: "#" },
+    { name: "Partners", href: "#" },
+    { name: "Contact", href: "#" },
+  ],
+  resources: [
+    { name: "Blog", href: "#" },
+    { name: "FAQs", href: "/#faqs" },
+    { name: "Privacy", href: "#" },
+    { name: "Terms", href: "#" },
+    { name: "Security", href: "#" },
   ],
 };
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border bg-card/50">
-      <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid gap-12 md:grid-cols-4">
-          {/* Brand */}
-          <div>
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-xl font-bold tracking-tight"
-            >
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                <Phone className="h-4 w-4" />
+    <footer className="bg-white pt-24 pb-12 dark:bg-zinc-950 sm:pt-32">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 xl:gap-8">
+          {/* Brand & Socials */}
+          <div className="space-y-8 xl:col-span-2">
+            <Link href="/" className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#6C4CF1]">
+                <Phone className="h-4 w-4 text-white" />
               </div>
-              <span className="gradient-text">CallingGen</span>
+              <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
+                CallingGen
+              </span>
             </Link>
-            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              AI-powered voice calling platform that helps businesses automate
-              their customer communications.
+            <p className="text-sm leading-6 text-zinc-500 dark:text-zinc-400 max-w-sm">
+              The world's most advanced AI voice calling platform for modern businesses. Automate outbound and inbound calls with human-like AI agents.
             </p>
-          </div>
-
-          {/* Link columns */}
-          {Object.entries(footerLinks).map(([category, links]) => (
-            <div key={category}>
-              <h4 className="text-sm font-semibold uppercase tracking-wider text-foreground">
-                {category}
-              </h4>
-              <ul className="mt-4 space-y-3">
-                {links.map((link) => (
-                  <li key={link.label}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+            <div className="flex gap-x-6">
+              <a href="#" className="text-zinc-400 hover:text-[#6C4CF1] dark:hover:text-[#6C4CF1]">
+                <span className="sr-only">Twitter</span>
+                <MessageCircle className="h-5 w-5" />
+              </a>
+              <a href="#" className="text-zinc-400 hover:text-[#6C4CF1] dark:hover:text-[#6C4CF1]">
+                <span className="sr-only">GitHub</span>
+                <Globe className="h-5 w-5" />
+              </a>
+              <a href="#" className="text-zinc-400 hover:text-[#6C4CF1] dark:hover:text-[#6C4CF1]">
+                <span className="sr-only">LinkedIn</span>
+                <Briefcase className="h-5 w-5" />
+              </a>
+              <a href="#" className="text-zinc-400 hover:text-[#6C4CF1] dark:hover:text-[#6C4CF1]">
+                <span className="sr-only">Mail</span>
+                <Mail className="h-5 w-5" />
+              </a>
             </div>
-          ))}
-        </div>
-
-        {/* Bottom bar */}
-        <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-sm text-muted-foreground md:flex-row">
-          <p>&copy; {new Date().getFullYear()} CallingGen. All rights reserved.</p>
-          <div className="flex gap-6">
-            <Link
-              href="#"
-              className="transition-colors hover:text-foreground"
-            >
-              Privacy
-            </Link>
-            <Link
-              href="#"
-              className="transition-colors hover:text-foreground"
-            >
-              Terms
-            </Link>
           </div>
+          
+          {/* Links Columns */}
+          <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-3 xl:mt-0">
+            <div className="md:grid md:grid-cols-2 md:gap-8">
+              <div>
+                <h3 className="text-sm font-semibold leading-6 text-zinc-900 dark:text-white">Product</h3>
+                <ul role="list" className="mt-6 space-y-4">
+                  {footerLinks.product.map((item) => (
+                    <li key={item.name}>
+                      <Link href={item.href} className="text-sm leading-6 text-zinc-500 hover:text-[#6C4CF1] dark:text-zinc-400 dark:hover:text-white">
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mt-10 md:mt-0">
+                <h3 className="text-sm font-semibold leading-6 text-zinc-900 dark:text-white">Industries</h3>
+                <ul role="list" className="mt-6 space-y-4">
+                  {footerLinks.industries.map((item) => (
+                    <li key={item.name}>
+                      <Link href={item.href} className="text-sm leading-6 text-zinc-500 hover:text-[#6C4CF1] dark:text-zinc-400 dark:hover:text-white">
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="md:grid md:grid-cols-2 md:gap-8">
+              <div>
+                <h3 className="text-sm font-semibold leading-6 text-zinc-900 dark:text-white">Company</h3>
+                <ul role="list" className="mt-6 space-y-4">
+                  {footerLinks.company.map((item) => (
+                    <li key={item.name}>
+                      <Link href={item.href} className="text-sm leading-6 text-zinc-500 hover:text-[#6C4CF1] dark:text-zinc-400 dark:hover:text-white">
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mt-10 md:mt-0">
+                <h3 className="text-sm font-semibold leading-6 text-zinc-900 dark:text-white">Resources</h3>
+                <ul role="list" className="mt-6 space-y-4">
+                  {footerLinks.resources.map((item) => (
+                    <li key={item.name}>
+                      <Link href={item.href} className="text-sm leading-6 text-zinc-500 hover:text-[#6C4CF1] dark:text-zinc-400 dark:hover:text-white">
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="mt-16 border-t border-zinc-200 pt-8 dark:border-zinc-800 sm:mt-20 lg:mt-24">
+          <p className="text-xs leading-5 text-zinc-400 text-center">
+            &copy; {new Date().getFullYear()} CallingGen, Inc. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

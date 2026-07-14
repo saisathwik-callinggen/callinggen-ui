@@ -1,102 +1,56 @@
-"use client";
-
-import {
-  Building2,
-  GraduationCap,
-  HeartPulse,
-  Users,
-  ShieldCheck,
-  Headphones,
-} from "lucide-react";
+import { Home, GraduationCap, HeartPulse, Briefcase, Landmark, ShoppingBag, Car, Hotel, Headset } from "lucide-react";
 
 const industries = [
-  {
-    name: "Real Estate",
-    desc: "Automate property inquiries and schedule viewings effortlessly.",
-    icon: Building2,
-    gradient: "from-blue-500/10 to-cyan-500/10",
-    iconColor: "text-blue-600 dark:text-blue-400",
-  },
-  {
-    name: "Education",
-    desc: "Student outreach, admissions follow-ups, and enrollment calls.",
-    icon: GraduationCap,
-    gradient: "from-violet-500/10 to-purple-500/10",
-    iconColor: "text-violet-600 dark:text-violet-400",
-  },
-  {
-    name: "Healthcare",
-    desc: "Appointment reminders and patient follow-ups at scale.",
-    icon: HeartPulse,
-    gradient: "from-rose-500/10 to-pink-500/10",
-    iconColor: "text-rose-600 dark:text-rose-400",
-  },
-  {
-    name: "Recruitment",
-    desc: "Screen candidates and schedule interviews automatically.",
-    icon: Users,
-    gradient: "from-amber-500/10 to-yellow-500/10",
-    iconColor: "text-amber-600 dark:text-amber-400",
-  },
-  {
-    name: "Insurance",
-    desc: "Policy renewals, claims follow-ups, and lead qualification.",
-    icon: ShieldCheck,
-    gradient: "from-emerald-500/10 to-green-500/10",
-    iconColor: "text-emerald-600 dark:text-emerald-400",
-  },
-  {
-    name: "Customer Support",
-    desc: "24/7 automated support that resolves issues instantly.",
-    icon: Headphones,
-    gradient: "from-indigo-500/10 to-blue-500/10",
-    iconColor: "text-indigo-600 dark:text-indigo-400",
-  },
+  { icon: Home, title: "Real Estate", useCases: ["Lead Qualification", "Property Viewing Follow-ups", "Payment Reminders"] },
+  { icon: GraduationCap, title: "Education", useCases: ["Admissions Inquiry", "Fees Collection", "Alumni Outreach"] },
+  { icon: HeartPulse, title: "Healthcare", useCases: ["Appointment Scheduling", "Post-Care Follow-ups", "Insurance Reminders"] },
+  { icon: Briefcase, title: "Recruitment", useCases: ["Initial Screening", "Interview Scheduling", "Candidate Reactivation"] },
+  { icon: Landmark, title: "Finance", useCases: ["Loan Application Updates", "Collections", "Fraud Verification"] },
+  { icon: ShoppingBag, title: "Retail", useCases: ["Abandoned Cart Calls", "Delivery Updates", "Customer Feedback"] },
+  { icon: Car, title: "Automotive", useCases: ["Service Reminders", "Test Drive Booking", "Lease Expiry Follow-up"] },
+  { icon: Hotel, title: "Hospitality", useCases: ["Booking Confirmations", "Concierge Services", "Review Requests"] },
+  { icon: Headset, title: "BPO & Contact Centers", useCases: ["Tier 1 Support", "Outbound Telesales", "Overflow Handling"] },
 ];
 
 export default function Industries() {
   return (
-    <section id="industries" className="mx-auto max-w-7xl px-6 py-24">
-      <div className="mx-auto max-w-2xl text-center">
-        <p className="text-sm font-semibold uppercase tracking-widest text-primary">
-          Industries
-        </p>
-        <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">
-          Built for Every Industry
-        </h2>
-        <p className="mt-4 text-muted-foreground">
-          Our AI voice agents adapt to your industry&apos;s unique needs and
-          workflows.
-        </p>
-      </div>
+    <section id="industries" className="bg-zinc-50 py-24 dark:bg-zinc-900/50 sm:py-32">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl text-center mb-16">
+          <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-4xl">
+            Built For Every Industry
+          </h2>
+          <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
+            Discover how CallingGen automates voice operations across different sectors.
+          </p>
+        </div>
 
-      <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {industries.map((industry, i) => {
-          const Icon = industry.icon;
-          return (
-            <div
-              key={industry.name}
-              className="animate-fade-up group relative cursor-default overflow-hidden rounded-2xl border border-border bg-card p-7 transition-all hover:border-primary/30 hover:shadow-xl hover:-translate-y-1"
-              style={{ animationDelay: `${i * 100}ms` }}
-            >
-              {/* Gradient bg on hover */}
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${industry.gradient} opacity-0 transition-opacity group-hover:opacity-100`}
-              />
-              <div className="relative">
-                <div
-                  className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 ${industry.iconColor} transition-all group-hover:scale-110`}
-                >
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {industries.map((industry) => {
+            const Icon = industry.icon;
+            return (
+              <div 
+                key={industry.title} 
+                className="group rounded-2xl border border-zinc-200 bg-white p-8 transition-all hover:border-[#6C4CF1]/50 hover:shadow-xl hover:shadow-[#6C4CF1]/10 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700"
+              >
+                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400">
                   <Icon className="h-6 w-6" />
                 </div>
-                <h3 className="text-lg font-semibold">{industry.name}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {industry.desc}
-                </p>
+                <h3 className="mb-4 text-xl font-bold text-zinc-900 dark:text-white">
+                  {industry.title}
+                </h3>
+                <ul className="space-y-3">
+                  {industry.useCases.map((useCase, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+                      <div className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-[#6C4CF1]" />
+                      {useCase}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
     </section>
   );

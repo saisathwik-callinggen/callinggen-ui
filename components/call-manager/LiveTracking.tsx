@@ -4,9 +4,10 @@ import { LiveTrackingStats } from "./types";
 
 interface LiveTrackingProps {
   stats: LiveTrackingStats;
+  layout?: "vertical" | "horizontal";
 }
 
-export default function LiveTracking({ stats }: LiveTrackingProps) {
+export default function LiveTracking({ stats, layout = "vertical" }: LiveTrackingProps) {
   const steps = [
     { 
       key: "registry", 
@@ -53,6 +54,78 @@ export default function LiveTracking({ stats }: LiveTrackingProps) {
       glow: "dark:shadow-[0_0_15px_rgba(168,85,247,0.3)]",
     },
   ];
+
+
+
+  if (layout === "horizontal") {
+    return (
+      <div className="flex w-full flex-col rounded-2xl bg-white p-6 shadow-sm border border-zinc-200 dark:bg-gradient-to-b dark:from-[#09090b] dark:to-[#130f1c] dark:shadow-2xl dark:border-zinc-800/60 overflow-hidden">
+        {/* Header */}
+        <div className="mb-6 flex items-center justify-between shrink-0">
+          <div className="flex items-center gap-2 rounded-full border border-rose-500/30 bg-rose-500/10 px-3 py-1.5 shadow-[0_0_10px_rgba(244,63,94,0.2)]">
+            <div className="h-2 w-2 rounded-full bg-rose-500 animate-ping" />
+            <span className="text-[10px] font-extrabold tracking-widest text-rose-600 dark:text-rose-400 uppercase">Live Journey</span>
+          </div>
+          <div className="text-[10px] font-bold tracking-widest text-zinc-400 dark:text-zinc-500 uppercase">
+            Mission Control /
+          </div>
+        </div>
+
+        {/* Pipeline Area */}
+        <div className="relative flex items-center justify-between w-full py-2">
+          
+          {/* Horizontal Continuous Background Line */}
+          <div className="absolute top-1/2 left-[5%] right-[20%] -mt-[1px] h-[2px] bg-gradient-to-r from-rose-400 via-cyan-400 to-purple-500 z-0 opacity-40 dark:opacity-80" />
+
+          {/* Horizontal Steps */}
+          <div className="flex flex-1 justify-between gap-4 z-10 pr-8">
+            {steps.map((step) => {
+              const Icon = step.icon;
+              return (
+                <div key={step.key} className="flex flex-col items-center">
+                  <div className={`flex w-[160px] flex-col items-center justify-center rounded-2xl border border-zinc-100 bg-white/90 p-4 shadow-md backdrop-blur-md transition-all duration-300 hover:scale-105 hover:shadow-lg dark:border-zinc-700/50 dark:bg-[#16161e]/95 ${step.glow}`}>
+                    <div className={`mb-2 flex h-10 w-10 items-center justify-center rounded-xl ring-1 ${step.bgLight} ${step.bgDark}`}>
+                      <Icon className={`h-5 w-5 ${step.color}`} />
+                    </div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">
+                      {step.label}
+                    </p>
+                    <p className={`mt-0.5 text-2xl font-black ${step.color}`}>
+                      {step.value}
+                    </p>
+                    <p className="text-[9px] font-medium text-zinc-400 dark:text-zinc-500 truncate w-full text-center">
+                      {step.sub}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Outcomes Branching Area (Right side) */}
+          <div className="relative flex flex-col justify-center gap-4 z-10 border-l-2 border-purple-400/30 dark:border-purple-500/40 pl-8">
+            {/* Completed Card */}
+            <div className="relative flex flex-col items-center justify-center w-[120px] rounded-xl border border-zinc-200 bg-white py-3 shadow-sm dark:border-emerald-500/30 dark:bg-[#121217] dark:shadow-[0_0_10px_rgba(16,185,129,0.2)]">
+              <div className="absolute left-0 top-1/2 h-1/2 w-1 -translate-y-1/2 rounded-r-full bg-emerald-500" />
+              <p className="text-xl font-black text-emerald-600 dark:text-emerald-400">{stats.completed}</p>
+              <p className="text-[9px] font-bold tracking-wider text-zinc-500 uppercase mt-1">
+                Completed
+              </p>
+            </div>
+
+            {/* No Answer Card */}
+            <div className="relative flex flex-col items-center justify-center w-[120px] rounded-xl border border-zinc-200 bg-white py-3 shadow-sm dark:border-blue-500/30 dark:bg-[#121217] dark:shadow-[0_0_10px_rgba(59,130,246,0.2)]">
+              <div className="absolute left-0 top-1/2 h-1/2 w-1 -translate-y-1/2 rounded-r-full bg-blue-500" />
+              <p className="text-xl font-black text-blue-600 dark:text-blue-400">{stats.failed}</p>
+              <p className="text-[9px] font-bold tracking-wider text-zinc-500 uppercase mt-1">
+                No Answer
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-full flex-col rounded-2xl bg-white p-6 shadow-sm border border-zinc-200 dark:bg-gradient-to-b dark:from-[#09090b] dark:to-[#130f1c] dark:shadow-2xl dark:border-zinc-800/60 overflow-hidden">

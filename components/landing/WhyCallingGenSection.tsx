@@ -1,42 +1,77 @@
-import { Clock, ShieldCheck, Zap, Activity, Users, Settings, Database, Cloud, Star, Layers } from "lucide-react";
+"use client";
 
-const reasons = [
-  { icon: Clock, title: "24/7 AI Availability" },
-  { icon: Users, title: "Human-like Conversations" },
-  { icon: Layers, title: "Scalable Infrastructure" },
-  { icon: Cloud, title: "Secure Cloud Platform" },
-  { icon: Zap, title: "Easy Integrations" },
-  { icon: Activity, title: "Powerful Analytics" },
-  { icon: Settings, title: "Custom AI Agents" },
-  { icon: ShieldCheck, title: "Fast Deployment" },
-  { icon: Star, title: "White Label" },
-  { icon: Database, title: "Enterprise Ready" },
+import { motion } from "framer-motion";
+import { Clock, PhoneOff, TrendingUp, PiggyBank, BarChart3 } from "lucide-react";
+
+const benefits = [
+  {
+    icon: Clock,
+    title: "Runs 24/7",
+    desc: "Never miss a lead, even after hours.",
+  },
+  {
+    icon: PhoneOff,
+    title: "No Manual Dialing",
+    desc: "No manual dialing or hiring needed.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Scales Instantly",
+    desc: "10 or 10,000 calls, same setup.",
+  },
+  {
+    icon: PiggyBank,
+    title: "Affordable",
+    desc: "A fraction of the cost of hiring a calling team.",
+  },
+  {
+    icon: BarChart3,
+    title: "Real-time Insights",
+    desc: "Get analytics on every call instantly.",
+  }
 ];
 
 export default function WhyCallingGenSection() {
   return (
-    <section className="border-t border-zinc-200 bg-white py-24 dark:border-zinc-800 dark:bg-zinc-950 sm:py-32">
+    <section className="bg-white py-24 sm:py-32 dark:bg-zinc-950 transition-colors duration-300">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-4xl">
-            Why Choose CallingGen?
-          </h2>
-          <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
-            The most reliable and advanced AI voice platform on the market.
-          </p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-4xl mb-6">
+              Why Choose CallingGen
+            </h2>
+          </motion.div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {reasons.map((reason) => {
-            const Icon = reason.icon;
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {benefits.map((benefit, index) => {
+            const Icon = benefit.icon;
             return (
-              <div 
-                key={reason.title} 
-                className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-zinc-100 bg-zinc-50 p-6 text-center transition-colors hover:border-[#6C4CF1]/30 hover:bg-[#6C4CF1]/5 dark:border-zinc-800/50 dark:bg-zinc-900 dark:hover:border-[#6C4CF1]/30"
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className={`group flex items-center gap-4 rounded-2xl bg-zinc-50 p-6 border border-zinc-100 shadow-sm transition-all hover:border-[#4F6BFF]/30 dark:bg-zinc-900/50 dark:border-zinc-800 ${index === 3 ? "lg:col-start-1 lg:col-span-1 lg:translate-x-1/2" : ""} ${index === 4 ? "lg:col-start-2 lg:col-span-1 lg:translate-x-1/2" : ""}`}
               >
-                <Icon className="h-8 w-8 text-[#6C4CF1]" />
-                <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-200">{reason.title}</span>
-              </div>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#4F6BFF]/10 text-[#4F6BFF] transition-colors">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-zinc-900 dark:text-white leading-tight">
+                    {benefit.title}
+                  </h3>
+                  <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mt-1">
+                    {benefit.desc}
+                  </p>
+                </div>
+              </motion.div>
             );
           })}
         </div>

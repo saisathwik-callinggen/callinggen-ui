@@ -56,10 +56,10 @@ export default function CallLogsPage() {
     { key: "phone", label: "Phone", sortable: true, render: (c) => <span className="font-mono text-xs whitespace-nowrap">{c.phone}</span> },
     { key: "type", label: "Type", sortable: true, render: (c) => <Badge variant={c.type === "Inbound" ? "primary" : "neutral"}>{c.type}</Badge> },
     { key: "duration", label: "Duration", sortable: true, render: (c) => <span className="font-mono text-xs">{c.duration}</span> },
-    { 
-      key: "dateTime", 
-      label: "Date & Time", 
-      sortable: true, 
+    {
+      key: "dateTime",
+      label: "Date & Time",
+      sortable: true,
       render: (c) => {
         const d = new Date(c.dateTime);
         return (
@@ -68,14 +68,14 @@ export default function CallLogsPage() {
             <span className="text-[10px] text-zinc-500">{d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
           </div>
         );
-      } 
+      }
     },
     { key: "credits", label: "Credits", sortable: true, render: (c) => <span className="font-mono text-xs">{c.credits}</span> },
     { key: "response", label: "Response", sortable: true, render: (c) => getResponseBadge(c.response) },
     { key: "status", label: "Status", sortable: true, render: (c) => getStatusBadge(c.status) },
-    { 
-      key: "humanResponse", 
-      label: "Human Response", 
+    {
+      key: "humanResponse",
+      label: "Human Response",
       render: (c) => (
         <select
           value={c.humanResponse}
@@ -88,9 +88,9 @@ export default function CallLogsPage() {
         </select>
       )
     },
-    { 
-      key: "recordingScript", 
-      label: "Recording / Script", 
+    {
+      key: "recordingScript",
+      label: "Recording / Script",
       render: (c) => (
         <div className="flex items-center gap-2">
           <button className="text-violet-600 hover:text-violet-800 dark:text-violet-400 dark:hover:text-violet-300" title="Play Recording">
@@ -105,9 +105,9 @@ export default function CallLogsPage() {
     { key: "aiClassification", label: "AI Classification", sortable: true, render: (c) => <span className="text-xs whitespace-nowrap">{c.aiClassification}</span> },
     { key: "agent", label: "Agent", sortable: true, render: (c) => <span className="text-xs whitespace-nowrap">{c.agent}</span> },
     { key: "category", label: "Category", sortable: true, render: (c) => getCategoryBadge(c.category) },
-    { 
-      key: "actions", 
-      label: "Actions", 
+    {
+      key: "actions",
+      label: "Actions",
       render: (c) => (
         <button className="p-1 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200">
           <MoreHorizontal className="h-4 w-4" />
@@ -132,7 +132,7 @@ export default function CallLogsPage() {
         <Trash2 className="h-3.5 w-3.5" />
         Delete Selected
       </button>
-      <button 
+      <button
         onClick={clearSelection}
         className="text-xs font-medium text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300"
       >

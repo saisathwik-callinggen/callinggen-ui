@@ -31,6 +31,7 @@ export interface DataTableProps<T> {
   emptyStateMessage?: string;
   emptyStateSubMessage?: string;
   emptyStateIcon?: React.ReactNode;
+  disablePagination?: boolean;
 }
 
 export default function DataTable<T extends { id: string | number }>({
@@ -44,7 +45,8 @@ export default function DataTable<T extends { id: string | number }>({
   multiSelectActions,
   emptyStateMessage = "No records found",
   emptyStateSubMessage = "Try adjusting your filters or search query.",
-  emptyStateIcon = <PhoneOff className="h-8 w-8 text-zinc-300 dark:text-zinc-600" />
+  emptyStateIcon = <PhoneOff className="h-8 w-8 text-zinc-300 dark:text-zinc-600" />,
+  disablePagination = false
 }: DataTableProps<T>) {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterValues, setFilterValues] = useState<Record<string, string>>({});
@@ -95,7 +97,7 @@ export default function DataTable<T extends { id: string | number }>({
 
   // Pagination
   const totalPages = Math.ceil(sortedData.length / rowsPerPage) || 1;
-  const paginatedData = sortedData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+  const paginatedData = disablePagination ? sortedData : sortedData.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   const cycleSort = (key: string) => {
     setSortConfig(prev => {
@@ -282,7 +284,7 @@ export default function DataTable<T extends { id: string | number }>({
       </div>
 
       {/* Pagination */}
-      {paginatedData.length > 0 && (
+      {!disablePagination && paginatedData.length > 0 && (
         <PaginationControls 
           currentPage={currentPage}
           totalPages={totalPages}

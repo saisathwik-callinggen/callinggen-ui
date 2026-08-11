@@ -6,7 +6,6 @@ import { useAuth } from "@/components/AuthProvider";
 import DashboardShell from "@/components/DashboardShell";
 import DataTable, { Column } from "@/components/shared/DataTable";
 import Badge, { BadgeVariant } from "@/components/shared/Badge";
-import DetailsDrawer from "@/components/shared/DetailsDrawer";
 import { Calendar, PhoneCall, CheckCircle2, FileText, PlayCircle } from "lucide-react";
 
 interface Campaign {
@@ -28,6 +27,16 @@ interface Campaign {
   notes: string;
 }
 
+interface CallLog {
+  id: string;
+  campaignId: string;
+  phoneNumber: string;
+  contactName: string;
+  status: string;
+  duration: string;
+  timestamp: string;
+}
+
 const dummyCampaigns: Campaign[] = [
   { id: "1", name: "Fall Promo 2023", date: "2023-10-01", schedule: "Oct 1, 2023 - 09:00 AM", sheetName: "fall_leads.xlsx", totalCalls: 500, completedCalls: 500, failedCalls: 0, interested: 45, callbacks: 20, creditsUsed: 75.50, agent: "Sarah (Sales)", status: "Completed", script: "Hi, we have a fall promo...", uploadSource: "Excel Upload", notes: "Very successful campaign." },
   { id: "2", name: "Q4 Outreach", date: "2023-10-15", schedule: "Oct 15, 2023 - 10:00 AM", sheetName: "q4_targets.csv", totalCalls: 1200, completedCalls: 450, failedCalls: 12, interested: 30, callbacks: 15, creditsUsed: 120.00, agent: "Mike (Support)", status: "Running", script: "Hello, checking in for Q4...", uploadSource: "CSV Upload", notes: "Currently pausing briefly at noon." },
@@ -35,6 +44,8 @@ const dummyCampaigns: Campaign[] = [
   { id: "4", name: "Inactive Users Reactivation", date: "2023-09-10", schedule: "Sep 10, 2023 - 11:00 AM", sheetName: "inactive_users_v2.xlsx", totalCalls: 800, completedCalls: 800, failedCalls: 45, interested: 10, callbacks: 5, creditsUsed: 105.20, agent: "Sarah (Sales)", status: "Completed", script: "Hi, we missed you...", uploadSource: "Excel Upload", notes: "Low conversion rate." },
   { id: "5", name: "New Feature Announcement", date: "2023-10-25", schedule: "Oct 25, 2023 - 02:00 PM", sheetName: "new_feature.csv", totalCalls: 150, completedCalls: 0, failedCalls: 0, interested: 0, callbacks: 0, creditsUsed: 0, agent: "Mike (Support)", status: "Draft", script: "Did you see our new feature?", uploadSource: "CSV Upload", notes: "Need to finalize script." },
 ];
+
+
 
 const getStatusBadge = (status: string) => {
   const variantMap: Record<string, BadgeVariant> = {
@@ -44,6 +55,8 @@ const getStatusBadge = (status: string) => {
     Draft: "neutral",
     Paused: "warning",
     Failed: "error",
+    "No Answer": "warning",
+    Voicemail: "neutral",
   };
   return <Badge variant={variantMap[status] || "neutral"}>{status}</Badge>;
 };
@@ -51,8 +64,6 @@ const getStatusBadge = (status: string) => {
 export default function CampaignsPage() {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
-  
-  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
 
   useEffect(() => {
     if (!isLoggedIn) router.replace("/login");
@@ -70,12 +81,21 @@ export default function CampaignsPage() {
     { key: "status", label: "Status", sortable: true, render: (c) => getStatusBadge(c.status) },
   ];
 
+
+
   // Stats
   const totalCampaigns = dummyCampaigns.length;
   const running = dummyCampaigns.filter(c => c.status === "Running").length;
   const scheduled = dummyCampaigns.filter(c => c.status === "Scheduled").length;
   const completed = dummyCampaigns.filter(c => c.status === "Completed").length;
   const draft = dummyCampaigns.filter(c => c.status === "Draft").length;
+
+  const activeCampaigns = dummyCampaigns.filter(c => c.status !== "Completed");
+  const completedCampaigns = dummyCampaigns.filter(c => c.status === "Completed");
+
+  const handleRowClick = (campaign: Campaign) => {
+    router.push(`/campaign/${campaign.id}`);
+  };
 
   return (
     <DashboardShell title="Campaigns">
@@ -120,82 +140,51 @@ export default function CampaignsPage() {
           </div>
         </div>
 
-        {/* Table Section */}
-        <section className="flex flex-col flex-1 gap-4 min-h-[500px]">
+        {/* Scheduled / Active Campaigns Table Section */}
+        <section className="flex flex-col gap-4 mt-2">
           <div>
-            <h2 className="text-xl font-bold text-zinc-900 dark:text-white">All Campaigns</h2>
+            <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Active & Scheduled Campaigns</h2>
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              Manage your call campaigns, track live progress, and review past performance.
+              Manage your upcoming and running call campaigns. Click on a campaign to view details.
             </p>
           </div>
-          <div className="flex-1 min-h-0">
+          <div className="cursor-pointer">
             <DataTable 
-              data={dummyCampaigns}
+              data={activeCampaigns}
               columns={columns}
               searchableKeys={["name", "agent", "sheetName"]}
               filters={[
-                { key: "status", label: "Status", options: [{label: "Running", value: "Running"}, {label: "Scheduled", value: "Scheduled"}, {label: "Completed", value: "Completed"}, {label: "Draft", value: "Draft"}] },
+                { key: "status", label: "Status", options: [{label: "Running", value: "Running"}, {label: "Scheduled", value: "Scheduled"}, {label: "Draft", value: "Draft"}] },
                 { key: "agent", label: "Agent", options: [{label: "Sarah (Sales)", value: "Sarah (Sales)"}, {label: "Mike (Support)", value: "Mike (Support)"}, {label: "Emma (Onboarding)", value: "Emma (Onboarding)"}] }
               ]}
-              exportFileName="campaigns_export.xlsx"
-              onRowClick={setSelectedCampaign}
+              exportFileName="active_campaigns.xlsx"
+              onRowClick={handleRowClick}
+            />
+          </div>
+        </section>
+
+        {/* Completed Campaigns Table Section */}
+        <section className="flex flex-col gap-4 mt-10">
+          <div>
+            <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Completed Campaigns</h2>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+              Review performance and history of finished campaigns. Click on a campaign to view details.
+            </p>
+          </div>
+          <div className="cursor-pointer">
+            <DataTable 
+              data={completedCampaigns}
+              columns={columns}
+              searchableKeys={["name", "agent", "sheetName"]}
+              filters={[
+                { key: "agent", label: "Agent", options: [{label: "Sarah (Sales)", value: "Sarah (Sales)"}, {label: "Mike (Support)", value: "Mike (Support)"}, {label: "Emma (Onboarding)", value: "Emma (Onboarding)"}] }
+              ]}
+              exportFileName="completed_campaigns.xlsx"
+              onRowClick={handleRowClick}
             />
           </div>
         </section>
       </div>
-
-      <DetailsDrawer
-        isOpen={!!selectedCampaign}
-        onClose={() => setSelectedCampaign(null)}
-        title="Campaign Details"
-      >
-        {selectedCampaign && (
-          <div className="flex flex-col gap-6">
-            <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
-              <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Overview</h3>
-                {getStatusBadge(selectedCampaign.status)}
-              </div>
-              <div className="grid grid-cols-2 gap-y-4 gap-x-2 text-sm">
-                <div><span className="text-zinc-500">Name</span><p className="font-semibold dark:text-white">{selectedCampaign.name}</p></div>
-                <div><span className="text-zinc-500">Created Date</span><p className="font-semibold dark:text-white">{selectedCampaign.date}</p></div>
-                <div><span className="text-zinc-500">Schedule</span><p className="font-semibold dark:text-white">{selectedCampaign.schedule}</p></div>
-                <div><span className="text-zinc-500">AI Agent</span><p className="font-semibold dark:text-white">{selectedCampaign.agent}</p></div>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
-              <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Performance Metrics</h3>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 text-sm">
-                <div className="rounded-lg bg-white p-3 shadow-sm dark:bg-[#121622]"><span className="text-zinc-500 text-xs">Total Contacts</span><p className="text-lg font-bold dark:text-white">{selectedCampaign.totalCalls}</p></div>
-                <div className="rounded-lg bg-white p-3 shadow-sm dark:bg-[#121622]"><span className="text-zinc-500 text-xs">Completed</span><p className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{selectedCampaign.completedCalls}</p></div>
-                <div className="rounded-lg bg-white p-3 shadow-sm dark:bg-[#121622]"><span className="text-zinc-500 text-xs">Failed</span><p className="text-lg font-bold text-red-600 dark:text-red-400">{selectedCampaign.failedCalls}</p></div>
-                <div className="rounded-lg bg-white p-3 shadow-sm dark:bg-[#121622]"><span className="text-zinc-500 text-xs">Interested</span><p className="text-lg font-bold text-indigo-600 dark:text-indigo-400">{selectedCampaign.interested}</p></div>
-                <div className="rounded-lg bg-white p-3 shadow-sm dark:bg-[#121622]"><span className="text-zinc-500 text-xs">Callbacks</span><p className="text-lg font-bold text-amber-600 dark:text-amber-400">{selectedCampaign.callbacks}</p></div>
-                <div className="rounded-lg bg-white p-3 shadow-sm dark:bg-[#121622]"><span className="text-zinc-500 text-xs">Credits Used</span><p className="text-lg font-bold text-zinc-900 dark:text-white">${selectedCampaign.creditsUsed.toFixed(2)}</p></div>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-zinc-100 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
-              <h3 className="mb-4 text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">Configuration</h3>
-              <div className="mb-4">
-                <span className="text-zinc-500 text-sm">Upload Source</span>
-                <p className="font-medium dark:text-zinc-300 mt-1">{selectedCampaign.uploadSource} ({selectedCampaign.sheetName})</p>
-              </div>
-              <div className="mb-4">
-                <span className="text-zinc-500 text-sm">Agent Script</span>
-                <div className="mt-2 rounded-lg bg-white p-3 text-sm text-zinc-700 shadow-sm dark:bg-[#121622] dark:text-zinc-300 italic">
-                  "{selectedCampaign.script}"
-                </div>
-              </div>
-              <div>
-                <span className="text-zinc-500 text-sm">Notes</span>
-                <p className="font-medium dark:text-zinc-300 mt-1">{selectedCampaign.notes}</p>
-              </div>
-            </div>
-          </div>
-        )}
-      </DetailsDrawer>
     </DashboardShell>
   );
 }

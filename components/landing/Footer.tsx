@@ -1,95 +1,74 @@
-import Link from "next/link";
-import { Phone, MessageCircle, Globe, Briefcase, Mail } from "lucide-react";
+"use client";
 
-const footerLinks = {
-  product: [
-    { name: "Features", href: "/#features" },
-    { name: "Workflow", href: "/#workflow" },
-    { name: "Pricing", href: "/pricing" },
-    { name: "API", href: "#" },
-    { name: "Documentation", href: "#" },
-  ],
-  industries: [
-    { name: "Real Estate", href: "/#industries" },
-    { name: "Healthcare", href: "/#industries" },
-    { name: "Education", href: "/#industries" },
-    { name: "Finance", href: "/#industries" },
-    { name: "Retail", href: "/#industries" },
-  ],
-  company: [
-    { name: "About", href: "#" },
-    { name: "Careers", href: "#" },
-    { name: "Partners", href: "#" },
-    { name: "Contact", href: "#" },
-  ],
-  resources: [
-    { name: "Blog", href: "#" },
-    { name: "FAQs", href: "/#faqs" },
-    { name: "Privacy", href: "#" },
-    { name: "Terms", href: "#" },
-    { name: "Security", href: "#" },
-  ],
-};
+import Link from "next/link";
+import { Phone, Briefcase, Camera, MessageCircle, Mail, Phone as PhoneIcon } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-white pt-24 pb-12 dark:bg-zinc-950 sm:pt-32">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 xl:gap-8">
-          {/* Brand & Socials */}
-          <div className="space-y-8 xl:col-span-2">
+    <footer className="bg-zinc-50 border-t border-zinc-200 dark:border-zinc-800 dark:bg-zinc-950 transition-colors duration-300">
+      <div className="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8">
+        <div className="xl:grid xl:grid-cols-3 xl:gap-8">
+          
+          {/* Logo & Tagline */}
+          <div className="space-y-8 xl:col-span-1">
             <Link href="/" className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#6C4CF1]">
-                <Phone className="h-4 w-4 text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-[14px] bg-gradient-to-br from-[#4F6BFF] to-[#7B61FF] shadow-lg shadow-[#4F6BFF]/25">
+                <Phone className="h-5 w-5 text-white" />
               </div>
               <span className="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">
                 CallingGen
               </span>
             </Link>
-            <p className="text-sm leading-6 text-zinc-500 dark:text-zinc-400 max-w-sm">
-              The world's most advanced AI voice calling platform for modern businesses. Automate outbound and inbound calls with human-like AI agents.
+            <p className="text-sm leading-6 text-zinc-600 dark:text-zinc-400 font-medium max-w-xs">
+              AI-powered outbound & inbound calling platform that automates your business outreach 24/7.
             </p>
-            <div className="flex gap-x-6">
-              <a href="#" className="text-zinc-400 hover:text-[#6C4CF1] dark:hover:text-[#6C4CF1]">
-                <span className="sr-only">Twitter</span>
-                <MessageCircle className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-zinc-400 hover:text-[#6C4CF1] dark:hover:text-[#6C4CF1]">
-                <span className="sr-only">GitHub</span>
-                <Globe className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-zinc-400 hover:text-[#6C4CF1] dark:hover:text-[#6C4CF1]">
+            <div className="flex space-x-6">
+              <a href="#" className="text-zinc-500 hover:text-[#4F6BFF] dark:text-zinc-400 dark:hover:text-[#4F6BFF]">
                 <span className="sr-only">LinkedIn</span>
                 <Briefcase className="h-5 w-5" />
               </a>
-              <a href="#" className="text-zinc-400 hover:text-[#6C4CF1] dark:hover:text-[#6C4CF1]">
-                <span className="sr-only">Mail</span>
-                <Mail className="h-5 w-5" />
+              <a href="#" className="text-zinc-500 hover:text-[#4F6BFF] dark:text-zinc-400 dark:hover:text-[#4F6BFF]">
+                <span className="sr-only">Instagram</span>
+                <Camera className="h-5 w-5" />
+              </a>
+              <a href="#" className="text-zinc-500 hover:text-[#4F6BFF] dark:text-zinc-400 dark:hover:text-[#4F6BFF]">
+                <span className="sr-only">Twitter/X</span>
+                <MessageCircle className="h-5 w-5" />
               </a>
             </div>
           </div>
-          
-          {/* Links Columns */}
-          <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-3 xl:mt-0">
+
+          <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
+              {/* Quick Links */}
               <div>
-                <h3 className="text-sm font-semibold leading-6 text-zinc-900 dark:text-white">Product</h3>
+                <h3 className="text-sm font-semibold leading-6 text-zinc-900 dark:text-white">Quick Links</h3>
                 <ul role="list" className="mt-6 space-y-4">
-                  {footerLinks.product.map((item) => (
+                  {[
+                    { name: "Home", href: "/" },
+                    { name: "About", href: "/#about" },
+                    { name: "Features", href: "/#features" },
+                    { name: "Pricing", href: "/pricing" }
+                  ].map((item) => (
                     <li key={item.name}>
-                      <Link href={item.href} className="text-sm leading-6 text-zinc-500 hover:text-[#6C4CF1] dark:text-zinc-400 dark:hover:text-white">
+                      <Link href={item.href} className="text-sm font-medium leading-6 text-zinc-600 hover:text-[#4F6BFF] dark:text-zinc-400 dark:hover:text-white">
                         {item.name}
                       </Link>
                     </li>
                   ))}
                 </ul>
               </div>
+
+              {/* More Links */}
               <div className="mt-10 md:mt-0">
-                <h3 className="text-sm font-semibold leading-6 text-zinc-900 dark:text-white">Industries</h3>
+                <h3 className="text-sm font-semibold leading-6 text-zinc-900 dark:text-white">Support</h3>
                 <ul role="list" className="mt-6 space-y-4">
-                  {footerLinks.industries.map((item) => (
+                  {[
+                    { name: "FAQs", href: "/#faq" },
+                    { name: "Contact", href: "/contact" }
+                  ].map((item) => (
                     <li key={item.name}>
-                      <Link href={item.href} className="text-sm leading-6 text-zinc-500 hover:text-[#6C4CF1] dark:text-zinc-400 dark:hover:text-white">
+                      <Link href={item.href} className="text-sm font-medium leading-6 text-zinc-600 hover:text-[#4F6BFF] dark:text-zinc-400 dark:hover:text-white">
                         {item.name}
                       </Link>
                     </li>
@@ -97,39 +76,47 @@ export default function Footer() {
                 </ul>
               </div>
             </div>
-            <div className="md:grid md:grid-cols-2 md:gap-8">
+
+            {/* Contact Info */}
+            <div className="md:grid md:grid-cols-1 md:gap-8">
               <div>
-                <h3 className="text-sm font-semibold leading-6 text-zinc-900 dark:text-white">Company</h3>
+                <h3 className="text-sm font-semibold leading-6 text-zinc-900 dark:text-white">Contact Us</h3>
                 <ul role="list" className="mt-6 space-y-4">
-                  {footerLinks.company.map((item) => (
-                    <li key={item.name}>
-                      <Link href={item.href} className="text-sm leading-6 text-zinc-500 hover:text-[#6C4CF1] dark:text-zinc-400 dark:hover:text-white">
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="mt-10 md:mt-0">
-                <h3 className="text-sm font-semibold leading-6 text-zinc-900 dark:text-white">Resources</h3>
-                <ul role="list" className="mt-6 space-y-4">
-                  {footerLinks.resources.map((item) => (
-                    <li key={item.name}>
-                      <Link href={item.href} className="text-sm leading-6 text-zinc-500 hover:text-[#6C4CF1] dark:text-zinc-400 dark:hover:text-white">
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
+                  <li>
+                    <a href="mailto:hello@callinggen.com" className="group flex items-center gap-3 text-sm font-medium leading-6 text-zinc-600 dark:text-zinc-400 hover:text-[#4F6BFF] dark:hover:text-white">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-900 group-hover:bg-[#4F6BFF]/10">
+                        <Mail className="h-4 w-4" />
+                      </div>
+                      hello@callinggen.com
+                    </a>
+                  </li>
+                  <li>
+                    <a href="tel:+15550000000" className="group flex items-center gap-3 text-sm font-medium leading-6 text-zinc-600 dark:text-zinc-400 hover:text-[#4F6BFF] dark:hover:text-white">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-900 group-hover:bg-[#4F6BFF]/10">
+                        <PhoneIcon className="h-4 w-4" />
+                      </div>
+                      +1 (555) 000-0000
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
           </div>
         </div>
-        
-        <div className="mt-16 border-t border-zinc-200 pt-8 dark:border-zinc-800 sm:mt-20 lg:mt-24">
-          <p className="text-xs leading-5 text-zinc-400 text-center">
+
+        {/* Bottom Bar */}
+        <div className="mt-16 border-t border-zinc-200 dark:border-zinc-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-xs leading-5 text-zinc-500 dark:text-zinc-400 font-medium">
             &copy; {new Date().getFullYear()} CallingGen, Inc. All rights reserved.
           </p>
+          <div className="flex gap-6">
+            <Link href="/privacy" className="text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white">
+              Terms of Service
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

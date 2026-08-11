@@ -24,6 +24,8 @@ import {
   CreditCard,
   ArrowUpCircle,
   MessageSquareText,
+  CalendarClock,
+  Settings,
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 
@@ -167,15 +169,20 @@ export default function DashboardShell({
 
         {/* User section at bottom */}
         <div className="shrink-0 border-t border-zinc-200 p-3 dark:border-zinc-800">
-          <div className="mb-2 flex items-center gap-2.5 rounded-lg px-2 py-1.5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-indigo-500">
+          <Link 
+            href="/profile"
+            className="group mb-2 flex items-center gap-2.5 rounded-lg px-2 py-1.5 transition hover:bg-zinc-100 dark:hover:bg-zinc-800/50"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-indigo-500 shadow-sm shadow-violet-500/20 group-hover:shadow-md">
               <UserCircle2 className="h-5 w-5 text-white" />
             </div>
-            <div className="min-w-0">
-              <p className="truncate text-xs font-semibold">{user?.name ?? "Admin User"}</p>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-semibold text-zinc-900 dark:text-zinc-100">{user?.name ?? "Admin User"}</p>
               <p className="truncate text-[10px] text-zinc-500">{user?.email ?? "admin@callinggen.com"}</p>
             </div>
-          </div>
+            <Settings className="h-4 w-4 text-zinc-400 transition group-hover:text-violet-600 dark:group-hover:text-violet-400" />
+          </Link>
           <button
             onClick={logout}
             className="flex w-full items-center justify-center gap-2 rounded-lg border border-zinc-200 py-2 text-xs font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"

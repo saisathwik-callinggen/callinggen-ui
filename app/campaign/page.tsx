@@ -6,7 +6,7 @@ import { useAuth } from "@/components/AuthProvider";
 import DashboardShell from "@/components/DashboardShell";
 import DataTable, { Column } from "@/components/shared/DataTable";
 import Badge, { BadgeVariant } from "@/components/shared/Badge";
-import { Calendar, PhoneCall, CheckCircle2, FileText, PlayCircle } from "lucide-react";
+import { Calendar, PhoneCall, CheckCircle2, FileText, PlayCircle, PauseCircle, Square } from "lucide-react";
 
 interface Campaign {
   id: string;
@@ -64,12 +64,18 @@ const getStatusBadge = (status: string) => {
 export default function CampaignsPage() {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
+  const [campaigns, setCampaigns] = useState<Campaign[]>(dummyCampaigns);
 
   useEffect(() => {
     if (!isLoggedIn) router.replace("/login");
   }, [isLoggedIn, router]);
 
   if (!isLoggedIn) return null;
+
+  const updateCampaignStatus = (id: string, newStatus: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCampaigns(prev => prev.map(c => c.id === id ? { ...c, status: newStatus } : c));
+  };
 
   const columns: Column<Campaign>[] = [
     { key: "name", label: "Campaign Name", sortable: true, render: (c) => <span className="font-semibold text-zinc-900 dark:text-white">{c.name}</span> },
@@ -79,19 +85,54 @@ export default function CampaignsPage() {
     { key: "creditsUsed", label: "Credits", sortable: true, render: (c) => <span className="font-mono">${c.creditsUsed.toFixed(2)}</span> },
     { key: "agent", label: "AI Agent", sortable: true },
     { key: "status", label: "Status", sortable: true, render: (c) => getStatusBadge(c.status) },
+    { 
+      key: "actions", 
+      label: "Actions",
+      render: (c) => (
+        <div className="flex items-center gap-2">
+          {c.status === "Scheduled" && (
+             <button 
+               onClick={(e) => updateCampaignStatus(c.id, "Running", e)}
+               className="flex items-center justify-center h-8 w-8 rounded-full bg-violet-100 text-violet-600 hover:bg-violet-200 dark:bg-violet-900/30 dark:text-violet-400 dark:hover:bg-violet-900/50 transition shadow-sm"
+               title="Run Campaign"
+             >
+               <PlayCircle className="h-4 w-4" />
+             </button>
+          )}
+          {c.status === "Running" && (
+             <>
+               <button 
+                 onClick={(e) => updateCampaignStatus(c.id, "Paused", e)}
+                 className="flex items-center justify-center h-8 w-8 rounded-full bg-amber-100 text-amber-600 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:hover:bg-amber-900/50 transition shadow-sm"
+                 title="Pause Campaign"
+               >
+                 <PauseCircle className="h-4 w-4" />
+               </button>
+               <button 
+                 onClick={(e) => updateCampaignStatus(c.id, "Completed", e)}
+                 className="flex items-center justify-center h-8 w-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 transition shadow-sm"
+                 title="Stop Campaign"
+               >
+                 <Square className="h-4 w-4" />
+               </button>
+             </>
+          )}
+        </div>
+      )
+    },
   ];
 
 
 
   // Stats
-  const totalCampaigns = dummyCampaigns.length;
-  const running = dummyCampaigns.filter(c => c.status === "Running").length;
-  const scheduled = dummyCampaigns.filter(c => c.status === "Scheduled").length;
-  const completed = dummyCampaigns.filter(c => c.status === "Completed").length;
-  const draft = dummyCampaigns.filter(c => c.status === "Draft").length;
+  const totalCampaigns = campaigns.length;
+  const running = campaigns.filter(c => c.status === "Running").length;
+  const scheduled = campaigns.filter(c => c.status === "Scheduled").length;
+  const completed = campaigns.filter(c => c.status === "Completed").length;
+  const draft = campaigns.filter(c => c.status === "Draft").length;
 
-  const activeCampaigns = dummyCampaigns.filter(c => c.status !== "Completed");
-  const completedCampaigns = dummyCampaigns.filter(c => c.status === "Completed");
+  const activeCampaigns = campaigns.filter(c => c.status !== "Completed");
+  const completedCampaigns = campaigns.filter(c => c.status === "Completed");
 
   const handleRowClick = (campaign: Campaign) => {
     router.push(`/campaign/${campaign.id}`);

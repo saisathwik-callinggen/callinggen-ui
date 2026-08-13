@@ -9,7 +9,7 @@ import ContactsTable from "@/components/call-manager/ContactsTable";
 import DataTable, { Column } from "@/components/shared/DataTable";
 import Badge, { BadgeVariant } from "@/components/shared/Badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, Clock, FileText, PlayCircle, Users2, Volume2, Mic, MoreHorizontal } from "lucide-react";
+import { ArrowLeft, Clock, FileText, PlayCircle, PauseCircle, Square, Users2, Volume2, Mic, MoreHorizontal, TableProperties, Timer, Activity, PhoneCall } from "lucide-react";
 import { Contact, LiveTrackingStats } from "@/components/call-manager/types";
 
 interface CallLog {
@@ -75,7 +75,7 @@ export default function CampaignDetail() {
   if (!isLoggedIn) return null;
 
   const campaignId = Array.isArray(id) ? id[0] : id;
-  const campaign = dummyCampaigns[campaignId as string];
+  const [campaign, setCampaign] = useState<any>(dummyCampaigns[campaignId as string]);
 
   if (!campaign) {
     return (
@@ -187,7 +187,7 @@ export default function CampaignDetail() {
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <h1 className="text-2xl font-bold text-zinc-900 dark:text-white flex items-center gap-3 truncate">
               {campaign.name}
               {getStatusBadge(campaign.status)}
@@ -197,57 +197,111 @@ export default function CampaignDetail() {
               Scheduled for: <span className="font-semibold text-zinc-700 dark:text-zinc-300">{campaign.schedule}</span>
             </p>
           </div>
+          <div className="flex items-center gap-2 shrink-0">
+             {campaign.status === "Scheduled" && (
+                <button 
+                  onClick={() => setCampaign({...campaign, status: "Running"})}
+                  className="flex items-center gap-2 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-700 transition shadow-sm"
+                >
+                  <PlayCircle className="h-4 w-4" /> Run Campaign
+                </button>
+             )}
+             {campaign.status === "Running" && (
+                <>
+                  <button 
+                    onClick={() => setCampaign({...campaign, status: "Paused"})}
+                    className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700 hover:bg-amber-100 dark:border-amber-900/50 dark:bg-amber-900/20 dark:text-amber-400 transition shadow-sm"
+                  >
+                    <PauseCircle className="h-4 w-4" /> Pause
+                  </button>
+                  <button 
+                    onClick={() => setCampaign({...campaign, status: "Completed"})}
+                    className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-700 hover:bg-red-100 dark:border-red-900/50 dark:bg-red-900/20 dark:text-red-400 transition shadow-sm"
+                  >
+                    <Square className="h-4 w-4" /> Stop
+                  </button>
+                </>
+             )}
+          </div>
         </div>
 
         {/* Top Section: Overview Cards */}
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800/60 dark:bg-zinc-900/50 flex flex-col justify-center">
             <div className="flex items-center gap-3 mb-2 text-violet-600 dark:text-violet-400">
               <Users2 className="h-5 w-5" />
               <h3 className="font-semibold text-sm">Total Contacts</h3>
             </div>
             <p className="text-3xl font-bold text-zinc-900 dark:text-white">{campaign.totalCalls}</p>
-            <p className="text-[10px] text-zinc-500 mt-2 truncate">From: {campaign.uploadSource}</p>
           </div>
 
           <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800/60 dark:bg-zinc-900/50 flex flex-col justify-center">
             <div className="flex items-center gap-3 mb-2 text-blue-600 dark:text-blue-400">
+              <TableProperties className="h-5 w-5" />
+              <h3 className="font-semibold text-sm">Data Source</h3>
+            </div>
+            <p className="text-xl font-bold text-zinc-900 dark:text-white truncate">{campaign.sheetName}</p>
+            <p className="text-[10px] text-zinc-500 mt-2 truncate">From: {campaign.uploadSource}</p>
+          </div>
+
+          <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800/60 dark:bg-zinc-900/50 flex flex-col justify-center">
+            <div className="flex items-center gap-3 mb-2 text-emerald-600 dark:text-emerald-400">
               <PlayCircle className="h-5 w-5" />
               <h3 className="font-semibold text-sm">AI Agent</h3>
             </div>
-            <p className="text-xl font-bold text-zinc-900 dark:text-white">{campaign.agent}</p>
+            <p className="text-xl font-bold text-zinc-900 dark:text-white truncate">{campaign.agent}</p>
           </div>
 
-          <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800/60 dark:bg-zinc-900/50 md:col-span-2">
-            <div className="flex items-center gap-3 mb-2 text-emerald-600 dark:text-emerald-400">
-              <FileText className="h-5 w-5" />
-              <h3 className="font-semibold text-sm">Agent Script</h3>
+          <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800/60 dark:bg-zinc-900/50 flex flex-col justify-center">
+            <div className="flex items-center gap-3 mb-2 text-amber-600 dark:text-amber-400">
+              <Timer className="h-5 w-5" />
+              <h3 className="font-semibold text-sm">
+                {campaign.status === "Completed" ? "Duration" : "Estimation"}
+              </h3>
             </div>
-            <div className="rounded-lg bg-zinc-50 p-3 border border-zinc-100 text-xs text-zinc-700 shadow-inner dark:bg-[#121622] dark:border-zinc-800/50 dark:text-zinc-300 italic h-[60px] overflow-y-auto">
-              "{campaign.script}"
-            </div>
+            {campaign.status === "Completed" ? (
+              <>
+                 <p className="text-sm font-semibold text-zinc-900 dark:text-white">Started: 09:00 AM</p>
+                 <p className="text-sm font-semibold text-zinc-900 dark:text-white mt-1">Ended: 11:30 AM</p>
+              </>
+            ) : (
+              <>
+                 <p className="text-sm font-semibold text-zinc-900 dark:text-white">Est. Time: 2h 30m</p>
+                 <p className="text-sm font-semibold text-zinc-900 dark:text-white mt-1">Completion: ~11:30 AM</p>
+              </>
+            )}
           </div>
         </div>
 
         <div className="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800/60 dark:bg-zinc-900/50">
-          <h3 className="mb-3 font-semibold text-zinc-900 dark:text-white text-sm">Performance Metrics</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-             <div className="flex flex-col"><span className="text-zinc-500 text-xs">Completed</span><span className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{campaign.completedCalls || 0}</span></div>
-             <div className="flex flex-col"><span className="text-zinc-500 text-xs">Failed</span><span className="text-xl font-bold text-red-600 dark:text-red-400">{campaign.failedCalls || 0}</span></div>
-             <div className="flex flex-col"><span className="text-zinc-500 text-xs">Interested</span><span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">{campaign.interested || 0}</span></div>
-             <div className="flex flex-col"><span className="text-zinc-500 text-xs">Callbacks</span><span className="text-xl font-bold text-amber-600 dark:text-amber-400">{campaign.callbacks || 0}</span></div>
-             <div className="flex flex-col"><span className="text-zinc-500 text-xs">Credits Used</span><span className="text-xl font-bold text-zinc-900 dark:text-white">${(campaign.creditsUsed || 0).toFixed(2)}</span></div>
+          <h3 className="mb-4 font-bold text-zinc-900 dark:text-white flex items-center gap-2">
+             <Activity className="h-5 w-5 text-violet-500" />
+             Performance Metrics
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+             <div className="flex flex-col"><span className="text-zinc-500 text-xs uppercase tracking-wider">Dialed</span><span className="text-2xl font-bold text-zinc-900 dark:text-white">{campaign.completedCalls + campaign.failedCalls || 0}</span></div>
+             <div className="flex flex-col"><span className="text-zinc-500 text-xs uppercase tracking-wider">Connected</span><span className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{campaign.completedCalls || 0}</span></div>
+             <div className="flex flex-col"><span className="text-zinc-500 text-xs uppercase tracking-wider">Disconnected</span><span className="text-2xl font-bold text-red-600 dark:text-red-400">{campaign.failedCalls || 0}</span></div>
+             <div className="flex flex-col"><span className="text-zinc-500 text-xs uppercase tracking-wider">Interested</span><span className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">{campaign.interested || 0}</span></div>
+             <div className="flex flex-col"><span className="text-zinc-500 text-xs uppercase tracking-wider">Not Interested</span><span className="text-2xl font-bold text-zinc-600 dark:text-zinc-400">{Math.floor((campaign.completedCalls || 0) * 0.4)}</span></div>
+             <div className="flex flex-col"><span className="text-zinc-500 text-xs uppercase tracking-wider">Hot Leads</span><span className="text-2xl font-bold text-amber-600 dark:text-amber-400">{Math.floor((campaign.interested || 0) * 0.3)}</span></div>
+             <div className="flex flex-col"><span className="text-zinc-500 text-xs uppercase tracking-wider">Credits Used</span><span className="text-2xl font-bold text-zinc-900 dark:text-white">${(campaign.creditsUsed || 0).toFixed(2)}</span></div>
           </div>
         </div>
 
         {/* Middle Section: Live Tracking */}
-        <div className="mt-2 h-[220px]">
-          <LiveTracking stats={liveStats} layout="horizontal" />
-        </div>
+        {campaign.status !== "Completed" && (
+          <div className="mt-2 h-[220px]">
+            <LiveTracking stats={liveStats} layout="horizontal" />
+          </div>
+        )}
 
         {/* Bottom Section: Call Logs */}
         <div className="flex flex-col mt-4">
-          <h2 className="text-lg font-bold text-zinc-900 dark:text-white mb-4">Campaign Call Logs</h2>
+          <h2 className="text-lg font-bold text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
+             <PhoneCall className="h-5 w-5 text-indigo-500" />
+             Contact Details & Call Logs
+          </h2>
           <div className="bg-white dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800/60 rounded-xl overflow-hidden p-1 shadow-sm h-full min-h-[500px]">
             <DataTable 
               data={campaignLogs}

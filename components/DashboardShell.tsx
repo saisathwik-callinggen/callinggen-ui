@@ -34,11 +34,8 @@ const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, href: "/dashboard" },
   { label: "Calendar", icon: CalendarDays, href: "/calendar" },
   { label: "Call Manager", icon: PhoneCall, href: "/call-manager" },
-  { label: "Call Details", icon: ClipboardList, href: "/details" },
   { label: "Call Logs", icon: ClipboardList, href: "/call-logs" },
-  { label: "Responses", icon: MessageSquareText, href: "/responses" },
   { label: "Chat", icon: MessageSquareText, href: "/chat" },
-  { label: "Leads", icon: Users2, href: "/leads" },
   { label: "Campaign", icon: Megaphone, href: "/campaign" },
   { label: "Report", icon: FileText, href: "/report" },
 ];

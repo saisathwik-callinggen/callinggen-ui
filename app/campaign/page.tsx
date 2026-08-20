@@ -6,7 +6,8 @@ import { useAuth } from "@/components/AuthProvider";
 import DashboardShell from "@/components/DashboardShell";
 import DataTable, { Column } from "@/components/shared/DataTable";
 import Badge, { BadgeVariant } from "@/components/shared/Badge";
-import { Calendar, PhoneCall, CheckCircle2, FileText, PlayCircle, PauseCircle, Square } from "lucide-react";
+import SendMessageModal from "@/components/chat/SendMessageModal";
+import { Calendar, PhoneCall, CheckCircle2, FileText, PlayCircle, PauseCircle, Square, Send } from "lucide-react";
 
 interface Campaign {
   id: string;
@@ -27,16 +28,6 @@ interface Campaign {
   notes: string;
 }
 
-interface CallLog {
-  id: string;
-  campaignId: string;
-  phoneNumber: string;
-  contactName: string;
-  status: string;
-  duration: string;
-  timestamp: string;
-}
-
 const dummyCampaigns: Campaign[] = [
   { id: "1", name: "Fall Promo 2023", date: "2023-10-01", schedule: "Oct 1, 2023 - 09:00 AM", sheetName: "fall_leads.xlsx", totalCalls: 500, completedCalls: 500, failedCalls: 0, interested: 45, callbacks: 20, creditsUsed: 75.50, agent: "Sarah (Sales)", status: "Completed", script: "Hi, we have a fall promo...", uploadSource: "Excel Upload", notes: "Very successful campaign." },
   { id: "2", name: "Q4 Outreach", date: "2023-10-15", schedule: "Oct 15, 2023 - 10:00 AM", sheetName: "q4_targets.csv", totalCalls: 1200, completedCalls: 450, failedCalls: 12, interested: 30, callbacks: 15, creditsUsed: 120.00, agent: "Mike (Support)", status: "Running", script: "Hello, checking in for Q4...", uploadSource: "CSV Upload", notes: "Currently pausing briefly at noon." },
@@ -44,8 +35,6 @@ const dummyCampaigns: Campaign[] = [
   { id: "4", name: "Inactive Users Reactivation", date: "2023-09-10", schedule: "Sep 10, 2023 - 11:00 AM", sheetName: "inactive_users_v2.xlsx", totalCalls: 800, completedCalls: 800, failedCalls: 45, interested: 10, callbacks: 5, creditsUsed: 105.20, agent: "Sarah (Sales)", status: "Completed", script: "Hi, we missed you...", uploadSource: "Excel Upload", notes: "Low conversion rate." },
   { id: "5", name: "New Feature Announcement", date: "2023-10-25", schedule: "Oct 25, 2023 - 02:00 PM", sheetName: "new_feature.csv", totalCalls: 150, completedCalls: 0, failedCalls: 0, interested: 0, callbacks: 0, creditsUsed: 0, agent: "Mike (Support)", status: "Draft", script: "Did you see our new feature?", uploadSource: "CSV Upload", notes: "Need to finalize script." },
 ];
-
-
 
 const getStatusBadge = (status: string) => {
   const variantMap: Record<string, BadgeVariant> = {
@@ -65,6 +54,10 @@ export default function CampaignsPage() {
   const router = useRouter();
   const { isLoggedIn } = useAuth();
   const [campaigns, setCampaigns] = useState<Campaign[]>(dummyCampaigns);
+  
+  // Send message modal state
+  const [isSendMessageOpen, setIsSendMessageOpen] = useState(false);
+  const [selectedCampaignIdForModal, setSelectedCampaignIdForModal] = useState<string>("1");
 
   useEffect(() => {
     if (!isLoggedIn) router.replace("/login");
@@ -75,6 +68,12 @@ export default function CampaignsPage() {
   const updateCampaignStatus = (id: string, newStatus: string, e: React.MouseEvent) => {
     e.stopPropagation();
     setCampaigns(prev => prev.map(c => c.id === id ? { ...c, status: newStatus } : c));
+  };
+
+  const handleOpenSendMessage = (campaignId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedCampaignIdForModal(campaignId);
+    setIsSendMessageOpen(true);
   };
 
   const columns: Column<Campaign>[] = [
@@ -90,6 +89,17 @@ export default function CampaignsPage() {
       label: "Actions",
       render: (c) => (
         <div className="flex items-center gap-2">
+          {c.status === "Completed" && (
+            <button
+              onClick={(e) => handleOpenSendMessage(c.id, e)}
+              className="flex items-center gap-1.5 rounded-lg bg-violet-50 px-2.5 py-1 text-xs font-semibold text-violet-700 hover:bg-violet-100 dark:bg-violet-950/40 dark:text-violet-300 dark:hover:bg-violet-900/50 transition border border-violet-200 dark:border-violet-800/50 shadow-xs"
+              title="Send WhatsApp Message"
+            >
+              <Send className="h-3.5 w-3.5" />
+              <span>Send Message</span>
+            </button>
+          )}
+
           {c.status === "Scheduled" && (
              <button 
                onClick={(e) => updateCampaignStatus(c.id, "Running", e)}
@@ -99,6 +109,7 @@ export default function CampaignsPage() {
                <PlayCircle className="h-4 w-4" />
              </button>
           )}
+
           {c.status === "Running" && (
              <>
                <button 
@@ -121,8 +132,6 @@ export default function CampaignsPage() {
       )
     },
   ];
-
-
 
   // Stats
   const totalCampaigns = campaigns.length;
@@ -206,11 +215,23 @@ export default function CampaignsPage() {
 
         {/* Completed Campaigns Table Section */}
         <section className="flex flex-col gap-4 mt-10">
-          <div>
-            <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Completed Campaigns</h2>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              Review performance and history of finished campaigns. Click on a campaign to view details.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-zinc-900 dark:text-white">Completed Campaigns</h2>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                Review performance and history of finished campaigns. Send follow-up WhatsApp messages to completed campaign leads.
+              </p>
+            </div>
+            <button
+              onClick={() => {
+                setSelectedCampaignIdForModal("1");
+                setIsSendMessageOpen(true);
+              }}
+              className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-md shadow-violet-600/20 hover:opacity-90 transition shrink-0"
+            >
+              <Send className="h-3.5 w-3.5" />
+              <span>Send Message to Completed Leads</span>
+            </button>
           </div>
           <div className="cursor-pointer">
             <DataTable 
@@ -226,6 +247,13 @@ export default function CampaignsPage() {
           </div>
         </section>
       </div>
+
+      {/* Campaign Broadcast Send Message Modal */}
+      <SendMessageModal
+        isOpen={isSendMessageOpen}
+        onClose={() => setIsSendMessageOpen(false)}
+        initialCampaignId={selectedCampaignIdForModal}
+      />
     </DashboardShell>
   );
 }

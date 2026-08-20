@@ -31,6 +31,11 @@ export default function CallManagerPage() {
     googleSheetUrl: "",
     singleContactName: "",
     singleContactPhone: "",
+    autoSendMessageEnabled: true,
+    autoSendTrigger: "interested",
+    autoSendMaterialType: "text",
+    autoSendMaterialId: "txt-1",
+    autoSendTargetCategory: "all",
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -128,7 +133,7 @@ export default function CallManagerPage() {
       if (formData.uploadSource === "google_sheet" || formData.uploadSource === "single") {
         setContacts(dummyContacts);
       }
-      alert("Campaign Launched Successfully!");
+      alert("Campaign Launched Successfully with Automated WhatsApp Messaging Rules!");
     }
   };
 

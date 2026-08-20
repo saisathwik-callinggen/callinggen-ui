@@ -119,10 +119,16 @@ export default function CallLogsPage() {
   const uniqueAgents = Array.from(new Set(data.map((d) => d.agent)));
   const uniqueTypes = Array.from(new Set(data.map((d) => d.type)));
   const uniqueCategories = Array.from(new Set(data.map((d) => d.category)));
+  const uniqueResponses = Array.from(new Set(data.map((d) => d.response)));
+  const uniqueStatuses = Array.from(new Set(data.map((d) => d.status)));
+  const uniqueAiClassifications = Array.from(new Set(data.map((d) => d.aiClassification)));
 
   const filters: FilterOption[] = [
     { key: "type", label: "Type", options: uniqueTypes.map(t => ({ label: t, value: t })) },
     { key: "category", label: "Category", options: uniqueCategories.map(c => ({ label: c, value: c })) },
+    { key: "response", label: "Response", options: uniqueResponses.map(r => ({ label: r, value: r })) },
+    { key: "status", label: "Status", options: uniqueStatuses.map(s => ({ label: s, value: s })) },
+    { key: "aiClassification", label: "AI Classification", options: uniqueAiClassifications.map(ai => ({ label: ai, value: ai })) },
     { key: "agent", label: "Agent", options: uniqueAgents.map(a => ({ label: a, value: a })) },
   ];
 

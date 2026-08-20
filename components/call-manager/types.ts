@@ -21,6 +21,13 @@ export interface CampaignFormData {
   googleSheetUrl?: string;
   singleContactName?: string;
   singleContactPhone?: string;
+
+  // Auto Send WhatsApp Message settings
+  autoSendMessageEnabled?: boolean;
+  autoSendTrigger?: string; // "interested" | "completed" | "unanswered" | "all"
+  autoSendMaterialType?: "text" | "image" | "doc";
+  autoSendMaterialId?: string;
+  autoSendTargetCategory?: "all" | "hot" | "warm" | "cold";
 }
 
 export interface LiveTrackingStats {
